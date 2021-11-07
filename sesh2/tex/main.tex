@@ -1,0 +1,385 @@
+\documentclass[a4paper]{article}
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+
+%\usepackage{ngerman}	% Sprachanpassung Deutsch
+
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{a4paper, top=15mm}
+
+\usepackage{subcaption}
+\usepackage[shortlabels]{enumitem}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{braket}
+\usepackage{bbm}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{yhmath}
+\usepackage{tikz}
+\usetikzlibrary{patterns,decorations.pathmorphing,positioning}
+\usetikzlibrary{calc,decorations.markings}
+
+\usepackage[backend=biber, sorting=none]{biblatex}
+\addbibresource{uni.bib}
+
+\usepackage[framemethod=TikZ]{mdframed}
+
+\tikzstyle{titlered} =
+    [draw=black, thick, fill=white,%
+        text=black, rectangle,
+        right, minimum height=.7cm]
+
+
+\usepackage[colorlinks=true,naturalnames=true,plainpages=false,pdfpagelabels=true]{hyperref}
+\usepackage[parfill]{parskip}
+\usepackage{lipsum}
+
+
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+\pagestyle{myheadings}
+
+\markright{Popović\hfill Tensor Methods \hfill}
+
+
+\title{University of Vienna\\ Faculty of Mathematics\\
+\vspace{1cm}TENSOR METHODS FOR DATA SCIENCE AND SCIENTIFIC COMPUTING
+}
+\author{Milutin Popovic}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\section{Assignment 2}
+
+Let us introduce the \textit{column-major} convention for writing matrices in
+the indices notation. For $A \; \in \; \mathbb{R}^{n\times n}$, which has
+$n^2$ entries can be written down in the \textit{column-major} convention as
+\begin{align}
+    A = [a_{i+n(j-1)}]_{i,j = 1,\dots,n}.
+\end{align}
+\subsection{Matrix multiplication tensor}
+The matrix multiplication $AB=C$, for $B, C \in \mathbb{R}^{n\times n}$ is a
+bilinear operation, thereby there exists a tensor $ T = [t_{ijk}]\in
+\mathbb{R}^{n^2\times n^2\times n^2}$ such that the matrix multiplication can be
+represented as
+\begin{align}
+    c_k = \sum_{i=1}^{n^2}\sum_{j=1}^{n^2}t_{ijk}a_i b_k.
+\end{align}
+The tensor $T$ is referred to as the matrix multiplication tensor of order $n$.
+
+For $n = 2$ we can easily see the non-zero entries by writing out the matrix
+multiplication in the column major convention
+\begin{align}
+    c_1 &= a_1b_1 + a_3b_2,\\
+    c_2 &= a_2b_1 + a_4b_2,\\
+    c_1 &= a_1b_3 + a_3b_4,\\
+    c_1 &= a_2b_3 + a_4b_4.
+\end{align}
+So the non-zero entries in e.g. $k=1$ are $(1, 1)$ and $(3, 2)$, and so on.
+Thus the matrix multiplication Tensor of $n=2$ is
+\begin{align}
+t_{ij1} = \begin{pmatrix}
+    1 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0\\
+    0 & 1 & 0 & 0\\
+    0 & 0 & 0 & 0
+    \end{pmatrix},\\
+t_{ij2}=
+\begin{pmatrix}
+    0 & 0 & 0 & 0\\
+    1 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0\\
+    0 & 1 & 0 & 0
+\end{pmatrix},\\
+t_{ij3}=
+\begin{pmatrix}
+    0 & 0 & 1 & 0\\
+    0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 1\\
+    0 & 0 & 0 & 0
+\end{pmatrix},\\
+t_{ij4}=
+\begin{pmatrix}
+    0 & 0 & 0 & 0\\
+    0 & 0 & 1 & 0\\
+    0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 1
+\end{pmatrix}.
+\end{align}
+The $CPD$ (Canonical Polyadic Decomposition) of rank-$n^3$ of the multiplication tensor of
+order $n = 2$, specified by matrices $U, V, W \;\in \; \mathbb{R}^{4\times 8}$
+can be represented in such a way that the columns of these matrices satisfy
+\begin{align}
+    T = \sum_{\alpha=1}u_\alpha \otimes v_\alpha \times w_\alpha.
+\end{align}
+Each nonzero entry in $u_\alpha$ represents the column of the nonzero entry in $T$,
+each nonzero entry in $v_\alpha$ represents the row of the nonzero entry in
+$T$ and each nonzero entry in $w_\alpha$ represents the location of the $k$-th
+slice of the nonzero entry, so we have
+\begin{align}
+    U &=
+    \begin{pmatrix}
+        1 & 0 & 0 & 0 & 1 & 0 & 0 & 0\\
+        0 & 0 & 1 & 0 & 0 & 0 & 1 & 0\\
+        0 & 1 & 0 & 0 & 0 & 1 & 0 & 0\\
+        0 & 0 & 0 & 1 & 0 & 0 & 0 & 1
+    \end{pmatrix},\\
+    V &=
+    \begin{pmatrix}
+        1 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
+        0 & 1 & 0 & 1 & 0 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0 & 1 & 0 & 1 & 0\\
+        0 & 0 & 0 & 0 & 0 & 1 & 0 & 1
+    \end{pmatrix},\\
+    W &=
+    \begin{pmatrix}
+        1 & 1 & 0 & 0 & 0 & 0 & 0 & 0\\
+        0 & 0 & 1 & 1 & 0 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0 & 1 & 1 & 0 & 0\\
+        0 & 0 & 0 & 0 & 0 & 0 & 1 & 1
+    \end{pmatrix}.
+\end{align}
+\subsection{Mode Contraction}
+Let us introduce a notion of multiplying a matrix with a tensor which is
+called the mode-$k$ contraction. For $d \in \mathbb{N}, n_1,\dots, n_d \in
+\mathbb{N}$ and $k\in\{1,\dots,d\}$ the mode-$k$ contraction of a
+$d$-dimensional tensor $S\in\mathbb{R}^{n_1\times\cdots\times n_d}$ with a
+matrix $Z \in \mathbb{R}^{r\times n_k}$ is an operation
+\begin{align}
+    \times_k : [s_{i_1,\dots,i_d}]_{i_1\in I_1,\dots,i_d\in I_d}\mapsto
+    \left[\sum_{i_k=1}^{n_k}z_{\alpha i_k}s_{i_1,\dots,i_d}\right]_{
+    i_1\in I_1, \dots, i_{k-1}\in I_{k-1}, \alpha\in\{1,\dots,r\},
+i_{k+1}\in I_{k+1}, \dots, i_d \in I_d},
+\end{align}
+where $I_l = \{1, \dots, n_l\}$ for $l \in \{1,\dots, d\}$. Now that we know
+the definition we may write
+\begin{align}
+        T = Z \times_k S,
+\end{align}
+and $T$ is in $\mathbb{R}^{n_1\times \cdots n_{k-1} \times r\times n_{k-1}
+\times \cdots \times n_d}$. The algorithm constructed for the mode-$k$
+contraction is structured as follows
+\begin{enumerate}
+    \item initialize an empty array $T$
+    \item iterate $\alpha$ from 1 to $r$
+    \item initialize a zero array $s$ of size $n_1\times\cdots
+        n_{k-1}\times n_{n+1} \times \cdots n_d$
+    \item for each $j \in \{1, \dots , n_k\}$ add $Z_{\alpha, j}S_{i_1,
+        \dots, i_{n-1}, j, i_{n+1}, \dots ,i_d}$ to s
+    \item append $s$ to $T$
+        \item end iteration
+    \item reshape $T$ to $n_1\times \cdots n_{k-1} \times r\times n_{k-1}
+        \times \cdots \times n_d$ and return it
+\end{enumerate}
+\subsection{Evaluating a CPD}
+Let us now implement a function that will convert a rank-$r$ CPD of a
+$d$-dimensional tensor $S$ of size $n_1 \times \cdots \times n_d$, given
+$U^{(k)} \in \mathbb{R}^{n_k\times r}$ for $k\in \{1, \dots, k\}$.
+\begin{align}
+    S = \sum_{\alpha=1}^r u_\alpha^{(1)} \otimes \cdots \otimes
+    u_\alpha^{(d)}.
+\end{align}
+The implementation of this is straight forward. While iterating over $\alpha$
+all we have to do is call a function that will do a Kronecker product of the
+$\alpha$-th column slice of a matrix $U^{(k)}$ with  the same order column
+slice of the matrix $U^{(k+1)}$, for each $k \in \{1,\dots, d\}$. In
+``julia'' the only thing we have to be aware of is that the \textit{kron}
+function reverses the order for the Kronecker product that is it does the
+following
+\begin{align}
+        u \otimes v = \textit{kron}(v, u).
+\end{align}
+Meaning that if we pass a list of CPD matrices $[U^{(1)}, \dots, U^{(k)}]$ as
+arguments, we need to reverse its order\cite{code}.
+\subsection{Implementing the multiplication tensor and its CPD}
+Once again to recapitulate the multiplication tensor is of the size $T \in
+\mathbb{R}^{n^2\times n^2 \times n^2}$. With some tinkering we see that the
+nonzero entries in the $k$-th end-dimension corresponds to the matrix
+multiplication in the column major convention, and with some more tinkering
+we found a way to construct an multiplication tensor for an arbitrary
+dimension (finite) using three loops.
+\begin{enumerate}
+    \item loop over the column indices in the first row in the column major
+        convention $m=1:n:n^2$
+    \item loop over the row indices in the first column in the column major
+        convention $l=1:n$
+    \item $I = l:n:n^2$, $J = m:(m+n)$, $K = (l-1)+m$
+    \item $T_{i, j, k} = 1$ for every $i\in I, j\in J,k \in K$
+\end{enumerate}
+Additionally we can even construct a CPD of this tensor in the same loop
+since we know the indices $i, j, k$ of the nonzero entries, $U$ would be
+filled with the $i$-th row entry of each $n^3$ columns, $V$ would be filled
+in the $j$-th row entry of the each $n^3$ columns and finally $W$ would be
+filled in the corresponding $k$-th row entry of the each $n^3$ columns
+\cite{code}.
+
+Furthermore we can evaluate the matrix multiplication only with the CPD of the
+matrix multiplication tensor $T$, with $U, V, W$ without computing $T$. This
+is done by rewriting the matrix multiplication in the row-major convention
+with $U, V, W$ into
+\begin{align}
+    c_k = \sum_{\alpha=1}^r \left(\sum_{i=1}^{n^2} a_i
+    u_{i\alpha}\right)\cdot
+        \left(\sum_{j = 1}^{n^2} b_j v_{j\alpha}\right) \cdot w_{k\alpha}.
+\end{align}
+The implementation is straight forward it uses one loop and only a
+summation function \cite{code}.
+\subsection{Interpreting the Strassen algorithm in terms of CPD}
+For $n=2$ we will write the Strassen algorithm and its CPD in the column
+major convention. This algorithm allows matrix multiplication of square
+$2\times2$ matrices (even of order $2^n\times 2^n$) in seven essential
+multiplication steps instead of the stubborn eight. The Strassen algorithm
+defines seven new coefficients $M_l$, where $l\in {1, \cdots, 7}$
+\begin{align}
+    M_1 &:= (a_1 + a_4)(a_1 + a_4), \\
+    M_2 &:= (a_2 + a_4)b_1,\\
+    M_3 &:= a_1(b_3 - b_4),\\
+    M_4 &:= a_4(b_2 - b_1),\\
+    M_5 &:= (a_1 + a_3)b_4,\\
+    M_6 &:= (a_2 - a_1)(b_1 + b_3),\\
+    M_7 &:= (a_3 - a_4)(b_2 + b_4).
+\end{align}
+Then the coefficients $c_k$ can be calculated as
+\begin{align}
+    c_1 &= M_1 + M_4 - M_6 + M_7,\\
+    c_2 &= M_2 + M_4,\\
+    c_3 &= M_3 + M_5,\\
+    c_4 &= M_1 - M_2 + M_3 + M_6.\\
+\end{align}
+This ultimately means that there exists an rank-$7$ CPD decomposition of the
+matrix multiplication tensor $T$, with matrices $U, V, W \in
+\mathbb{R}^{4\times 7}$. By that $U$ represents the placement of $a_i$ in the
+definition of $M_l$ filled in the columns of $U$, $V$ represents the existence
+of $b_j$ in the definition of $M_l$ filled in the columns $V$ and $W$
+represents the $M_l$ placement in the coefficients $c_k$. Do note that these
+matrices have entries $-1, 0, 1$ corresponding to the addition/subtraction as
+defined in the $M_l$'s. The matrices $U, V, W$ are the following
+\begin{align}
+    U &=
+    \begin{pmatrix}
+        1 & 0 & 1 & 0 & 1 & -1 & 0 \\
+        0 & 1 & 0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 & 1 & 0 & 1 \\
+        1 & 1 & 0 & 1 & 0 & 0 & -1
+    \end{pmatrix},\\
+    V &=
+    \begin{pmatrix}
+        1 & 1 & 0 & -1 & 0 & 1 & 0\\
+        0 & 0 & 0 & 1 & 0 & 0 & 1\\
+        0 & 0 & 1 & 0 & 0 & 1 & 0\\
+        1 & 0 & -1 & 0 & 1 & 0 & 1
+    \end{pmatrix},\\
+    W &=
+    \begin{pmatrix}
+        1 & 0 & 0 & 1 & -1 & 0 & 1\\
+        0 & 1 & 0 & 1 & 0 & 0 & 0\\
+        0 & 0 & 1 & 0 & 1 & 0 & 0\\
+        1 & -1 & 1 & 0 & 0 & 1 & 0
+    \end{pmatrix}.
+\end{align}
+\nocite{code}
+\subsection{Tucker Structure and CP rank !!(NO real idea what  should be
+done here)!!}
+Let $\hat{a} = \begin{pmatrix}1 & 0\end{pmatrix}^T$ and $\hat{b} =
+\begin{pmatrix}0 & 1\end{pmatrix}$, we can define a Laplace-like tensor $T$
+using the Kronecker product
+\begin{align}\label{eq: cpd}
+    \hat{T} = \hat{b}\otimes \hat{a} \otimes \hat{a}+
+        \hat{a}\otimes \hat{b} \otimes \hat{a}+
+        \hat{a}\otimes \hat{a} \otimes \hat{b} \;\;\; \in
+        \mathbb{R}^{2\times2\times2},
+\end{align}
+which represents $T$ as a CPD of rank 3. The CPD is a special case of the
+Tucker decomposition with a super diagonal tucker core, in this case the
+tucker core is
+\begin{align}
+    S_{i_1i_2i_3} = \begin{cases}
+                    1\;\;\;\; \text{for} \;\; i_1=i_2=i_3\\
+                    0\;\;\;\; \text{else}
+                \end{cases}
+\end{align}
+for $i_1, i_2, i_3 = 1,2,3$. We may write the tucker decomposition of $T$ in
+terms of matrices $U_1, U_2, U_3 \in \mathbb{R}^{2\times 3}$ constructed by
+the $\hat{a}$ and $\hat{b}$ as in \ref{eq: cpd} in each of the summation
+steps.  Then $U_1$ would have $\hat{b}, \hat{a}, \hat{a}$ in the columns and
+so on.  Now we may write the Tucker decomposition for $T_{ijk}$ for $i_1,
+i_2,i_3
+= 1, 2$ as
+\begin{align}
+    \hat{T}_{i_1i_2i_3} = \sum_{\alpha_1}^3\sum_{\alpha_2}^3\sum_{\alpha_2}^3
+    (U_1)_{i_1\alpha_1} (U_2)_{i_2\alpha_2}  (U_3)_{i_3\alpha_3}
+    S_{\alpha_1\alpha_2\alpha_3}.
+\end{align}
+With this we can derive the first, second and third Tucker unfolding matrix
+by rewriting the Tucker decomposition
+\begin{align}
+    \hat{T}_{i_1i_2i_3} &=
+    \sum_{\alpha_k = 1}^3 (U_k)_{i_k\alpha_k} \sum_{\alpha_{k-1}=1}^3
+    \sum_{\alpha_{k+1}=1}^3(U_{k-1})_{i_{k-1}\alpha_{k-1}}
+    (U_{k+1})_{i_{k+1}\alpha_3}S_{\alpha_1 \alpha_2 \alpha_3}\\
+                  &=
+    \sum_{\alpha_k = 1}^3 (U_k)_{i_k\alpha_k} (Z_k)_{i_{k-1}i_{k+1}\alpha_k},
+\end{align}
+for $k=1, 2, 3$ cyclic. We call
+\begin{align}
+    \mathcal{U}^T_k := U_k Z_k^T
+\end{align}
+the $k-th$ Tucker unfolding. It turns out in our case all of them are unique
+and thereby the CPD decomposition is unique, thereby the CPD rank of
+$\hat{T}$ is three.
+
+Let us consider a richer structure, for $2<d \in \mathbb{N}$ and $n_1, \cdot
+,n_d\in \mathbb{N}$ all greater then one. For $k \in \{1, 2, 3\}$ consider
+$a_k, b_k \in \mathbb{R}^{n_k}$ linearly independent and for $\mathbb{N} \ni
+k \geq 4$ consider $c_k\in \mathbb{R}^{n_k}$ nonzero. Then we define a
+Laplace-like tensor
+\begin{align}
+    T = b_1 \otimes a_2 \otimes a_3 \otimes c_4\otimes \cdots \otimes c_d
++a_1 \otimes b_2 \otimes a_3 \otimes c_4\otimes \cdots \otimes c_d
++a_1 \otimes a_2 \otimes b_3 \otimes c_4\otimes \cdots \otimes c_d.
+\end{align}
+The matrices $U^{(k)} \in \mathbb{R}^{n_k \times 3}$ for $k= 1, 2 ,3$ are the
+following
+\begin{align}
+    U^{(1)} &= (b_1\; a_2\; a_3),\\
+    U^{(2)} &= (a_1\; b_2\; a_3),\\
+    U^{(3)} &= (a_1\; a_2\; b_3).\\
+\end{align}
+The matrices $U^{(k)} \in \mathbb{R}^{n_k \times 3}$ for $k = 4, \dots, d$
+are
+\begin{align}
+    U^{(4)} &= (c_4\; c_4\; c_4).\\
+            &\vdots\nonumber\\
+    U^{(d)} &= (c_d\; c_d\; c_d).
+\end{align}
+The Tucker core $S \in \mathbb{R}^{3\times 3\times3}$ is a superdiagonal
+tensor of order three. We can write the Tucker decomposition of $T$ as
+\begin{align}
+    \hat{T}_{i_1\dots i_d} &=
+    \sum_{\alpha_k = 1}^3 (U^{(k)})_{i_k\alpha_k}\cdot\nonumber
+\\&\cdot\sum_{\alpha_1,\dots,\alpha_{k-1},\alpha_{k+1},\dots, \alpha_d}^3
+       (U^{(1)})_{i_1\alpha_1}\cdots(U^{(k-1)})_{i_{k-1}\alpha_{k-1}}
+    (U^{(k+1)})_{i_{k+1}\alpha_3}\cdots(U^{(d)})_{i_d\alpha_d}
+    S_{\alpha_1 \dots \alpha_d}\\
+       &= \sum_{\alpha_k = 1}^3 (U^{(k)})_{i_k\alpha_k} (Z_{k})_{i_1,\dots
+       i_{k-1}i_{k+1}\dots i_d \alpha_k}.
+\end{align}
+All the Tucker unfoldings $\mathcal{U}_{k}$ for $k\geq 4$ are non-unique,
+because the matrices $U^{(k)}$ for $k \geq 4$ are constructed with the same
+column vectors. On the other hand we may write the Tucker decomposition in
+with the Kronecker product like this
+\begin{align}
+    T_{(k)} =U^{(k)} \cdot S_k \cdot (U^{(1)}\otimes\cdots\otimes
+    U^{(k-1)}\otimes U^{(k+1)}\otimes \cdots \otimes U^{(d)})
+\end{align}
+
+\printbibliography
+\end{document}

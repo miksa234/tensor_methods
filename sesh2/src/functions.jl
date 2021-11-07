@@ -24,7 +24,7 @@ function mode_k_dot(S, Z, k)
     end_dim = [[n[i] for i in 1:(k-1)]..., r, [n[i] for i in (k+1):length(n)]...]
     alpha_dim = [n[i] for i in 1:length(n) if i!=k]
     T = []
-    for alpha in 1:(size(Z))[1]
+    for alpha in 1:r
         s = zeros(alpha_dim...)
         for i_k in 1:n[k]
             s +=  Z[alpha, i_k] * selectdim(S, k, i_k)
@@ -50,8 +50,8 @@ function multiplication_tensor(n)
 
     count = 1
     for m=1:n:n^2, l=1:n
+        k = (l-1)+m
         for (i, j) in zip(collect(l:n:n^2), collect(m:m+n))
-            k = (l-1)+m
             T[i, j, k] = 1
             U[i, count] = 1
             V[j, count] = 1

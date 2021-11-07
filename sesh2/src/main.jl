@@ -32,11 +32,11 @@ function main()
     println("\n\nExercise 5")
     for n=1:8
         T, (U, V, W)= multiplication_tensor(n)
-        println("For n=$n T == CDP(U, V, W): ", cpd_eval([U, V, W]) == T)
+        println("For n=$n T == cpd_eval(U, V, W): ", cpd_eval([U, V, W]) == T)
     end
 
     # Exercise 6
-    n = 4   # can take bigger n
+    n = 2   # can take bigger n
     A = rand(1:10, n, n)
     B = rand(1:10, n, n)
     T, (U, V, W) = multiplication_tensor(n)
