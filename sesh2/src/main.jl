@@ -36,7 +36,7 @@ function main()
     end
 
     # Exercise 6
-    n = 2   # can take bigger n
+    n = 4   # can take bigger n
     A = rand(1:10, n, n)
     B = rand(1:10, n, n)
     T, (U, V, W) = multiplication_tensor(n)
