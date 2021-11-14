@@ -80,8 +80,8 @@ multiplication in the column major convention
 \begin{align}
     c_1 &= a_1b_1 + a_3b_2,\\
     c_2 &= a_2b_1 + a_4b_2,\\
-    c_1 &= a_1b_3 + a_3b_4,\\
-    c_1 &= a_2b_3 + a_4b_4.
+    c_3 &= a_1b_3 + a_3b_4,\\
+    c_4 &= a_2b_3 + a_4b_4.
 \end{align}
 So the non-zero entries in e.g. $k=1$ are $(1, 1)$ and $(3, 2)$, and so on.
 Thus the matrix multiplication Tensor of $n=2$ is
@@ -239,7 +239,7 @@ $2\times2$ matrices (even of order $2^n\times 2^n$) in seven essential
 multiplication steps instead of the stubborn eight. The Strassen algorithm
 defines seven new coefficients $M_l$, where $l\in {1, \cdots, 7}$
 \begin{align}
-    M_1 &:= (a_1 + a_4)(a_1 + a_4), \\
+    M_1 &:= (a_1 + a_4)(b_1 + b_4), \\
     M_2 &:= (a_2 + a_4)b_1,\\
     M_3 &:= a_1(b_3 - b_4),\\
     M_4 &:= a_4(b_2 - b_1),\\
@@ -249,7 +249,7 @@ defines seven new coefficients $M_l$, where $l\in {1, \cdots, 7}$
 \end{align}
 Then the coefficients $c_k$ can be calculated as
 \begin{align}
-    c_1 &= M_1 + M_4 - M_6 + M_7,\\
+    c_1 &= M_1 + M_4 - M_5 + M_7,\\
     c_2 &= M_2 + M_4,\\
     c_3 &= M_3 + M_5,\\
     c_4 &= M_1 - M_2 + M_3 + M_6.\\

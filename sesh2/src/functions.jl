@@ -43,7 +43,7 @@ of size \alpha $n × n$, satisfying the column major convention
         $C_k = ∑_{i, j}^{n^2} T_{ijk} ⋅ A_i ⋅ B_k$
 """
 function multiplication_tensor(n)
-    T = zeros(n^2, n^2, n^2)
+    T = zeros(Int, n^2, n^2, n^2)
     U = zeros(n^2, n^3)
     V = zeros(n^2, n^3)
     W = zeros(n^2, n^3)
@@ -59,7 +59,7 @@ function multiplication_tensor(n)
             count += 1
         end
     end
-    return T, (U, V, W)
+    return T, [U, V, W]
 end
 
 @doc raw"""
@@ -76,6 +76,7 @@ function cpd_eval(U_i)
     r = size(U_i[1])[2]
     n_d = [size(U_i[i])[1] for i in 1:d]
     s = zeros(n_d...)
+
     for alpha in 1:r
         k = kron(U_i[1][:, alpha], U_i[2][:, alpha])
         for i in 2:(d-1)
@@ -129,7 +130,6 @@ function strassen_alg(A, B)
     C[4] = M_1 - M_2 + M_3 + M_6
     return C
 end
-
 @doc raw"""
     rank_7_CPD()
 
