@@ -8,7 +8,7 @@ using LinearAlgebra
 Compute the mode-$k$ contraction of a tensor $S$ of size $n_1 ×  ⋯ × n_d$
 with a matrix $Z$ of size $r × n_k$
 
-Out: A tensor $T$ of size $n_1 ×  ⋯ ×  n_{k-1} ×  r ×  n_{k+1} ×  ⋯ × n_d$
+Out: A tensor $S$ of size $n_1 ×  ⋯ ×  n_{k-1} ×  r ×  n_{k+1} ×  ⋯ × n_d$
 """
 function mode_k_dot(S, Z, k)
     n = size(S)
