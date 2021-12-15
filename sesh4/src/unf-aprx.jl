@@ -18,12 +18,29 @@ function σ_unfold(C, d)
     return Σ_s
 end
 
+function ttmps_unfold(A, k)
+    n = size(A)
+    d = length(n)
+    C = copy(A)
+    A_k = reshape(C, (prod([n[i] for i in 1:k]), prod([n[i] for i in k+1:d])))
+    return A_k
+end
+
+function tucker_unfold(A, k)
+    n = size(A)
+    d = length(n)
+    C = copy(A)
+    C_perm = permutedims(C, ([i for i=1:d if i!=k]..., k))
+    A_k = reshape(C_perm, (prod([n[i] for i=1:d if i!=k]), n[k]))
+    return A_k
+end
+
 ϵ_s = [1/(10^(j*2)) for j=1:5] # computer not goode enough for j = 6
-function rank_approx(C, ϵ_s=ϵ_s)
+function rank_approx(C, method,ϵ_s=ϵ_s)
     d = length(size(C))
     ϵ_jk = []; r_jk = []; σ_jk = []
     for k=1:d
-        C_k = tenmat(C, k)
+        C_k = method(C, k)
         for (j, ϵ_j) in enumerate(ϵ_s)
             for r=1:rank(C_k)
                 U_hat, Σ_hat, V_hat = tsvd(C_k, r)
