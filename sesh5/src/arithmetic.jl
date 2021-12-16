@@ -73,18 +73,18 @@ end
     with different TT-MPS decompositions U with ranks $p_1, … , p_{d-1}$
     and V with ranks $q_1, … ,q_{d-1}$ respectively.
 
-    Output is the TT-MPS representation of $Au$ with ranks $(q_1 ⋅ p_1), ⋯ , (q_{d-1} ⋅ p_{d-1})$.
+    Output is the TT-MPS representation of $A ⋅ u$ with ranks $(q_1 ⋅ p_1), ⋯ , (q_{d-1} ⋅ p_{d-1})$.
 """
 function tt_matvec(A, U)
     W = []
     d = length(U)
     for k ∈ 1:d
-        α_k, m_k, n_k, α_k1 = size(A[k])
+        α_k, n_k, m_k, α_k1 = size(A[k])
         β_k, m_k, β_k1 = size(U[k])
         W_k = zeros(α_k * β_k, n_k, α_k1 * β_k1)
-        for i_k ∈ 1:m_k
-            for j_k ∈ 1:n_k
-                W_k[:, i_k, :] += A[k][:, i_k, j_k, :] * U[k][:, j_k, :]
+        for i_k ∈ 1:n_k
+            for j_k ∈ 1:m_k
+                W_k[:, i_k, :] += kron(A[k][:, i_k, j_k, :], U[k][:, j_k, :])
             end
         end
         append!(W, [W_k])

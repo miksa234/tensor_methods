@@ -18,6 +18,7 @@ function main()
     d = 4
     p_Σ = []
     p_R = []
+    global R_x = []; global R_y = []; global R_s = []; global R_z = []
     for (p, q) ∈ ([3, 4], [5, 7])
         X = [che_pol(sum([t_1/1, t_2/2, t_3/3, t_4/4]), p) for t_1 ∈ t(n), t_2 ∈ t(n), t_3 ∈ t(n), t_4 ∈ t(n)];
         Y = [che_pol(sum([t_1/1, t_2/2, t_3/3, t_4/4]), q) for t_1 ∈ t(n), t_2 ∈ t(n), t_3 ∈ t(n), t_4 ∈ t(n)];
@@ -38,24 +39,28 @@ function main()
             append!(Y_Σ, [σ_y])
             append!(S_Σ, [σ_s])
             append!(Z_Σ, [σ_z])
-            append!(r_x, [rank(X_k)])
-            append!(r_y, [rank(Y_k)])
-            append!(r_s, [rank(S_k)])
-            append!(r_z, [rank(Z_k)])
+            append!(r_x, rank(X_k))
+            append!(r_y, rank(Y_k))
+            append!(r_s, rank(S_k))
+            append!(r_z, rank(Z_k))
         end
+        append!(R_x, [r_x])
+        append!(R_y, [r_y])
+        append!(R_s, [r_s])
+        append!(R_z, [r_z])
+
         p_σ = plot(layout = 4, margin=5mm, size=(800, 800), title="p=$p, q=$q", dpi=500)
         plot!(p_σ[1], X_Σ, markershape=:circle, ylabel=L"\Sigma_{X_k}", label=[L"X_1" L"X_2" L"X_3"])
         plot!(p_σ[2], Y_Σ, markershape=:circle, ylabel=L"\Sigma_{Y_k}", label=[L"Y_1" L"Y_2" L"Y_3"])
         plot!(p_σ[3], S_Σ, markershape=:circle, ylabel=L"\Sigma_{S_k}", label=[L"S_1" L"S_2" L"S_3"])
         plot!(p_σ[4], Z_Σ, markershape=:circle, ylabel=L"\Sigma_{Z_k}", label=[L"Z_1" L"Z_2" L"Z_3"])
         append!(p_Σ, [p_σ])
-        p_r = plot(margin=5mm, size=(700, 350), title="p=$p, q=$q", ylabel=L"r_k", dpi=300)
+        p_r = plot(margin=5mm, size=(500, 350), title="p=$p, q=$q", ylabel=L"r_k", dpi=300)
         plot!(p_r, r_x, markershape=:circle, label=L"r_X")
         plot!(p_r, r_y, markershape=:circle, label=L"r_Y")
         plot!(p_r, r_s, markershape=:circle, label=L"r_S", alpha=0.5)
         plot!(p_r, r_z, markershape=:circle, label=L"r_Z")
         append!(p_R, [p_r])
-
     end
     savefig(p_Σ[1], "./plots/sigma_34.png")
     savefig(p_Σ[2], "./plots/sigma_57.png")
@@ -72,13 +77,17 @@ function main()
     S = X .+ Y
     Z = X .* Y
 
-    C_x, r_x, σ_x, ϵ_x = tt_svd_ϵ(X, 1e-12);
-    C_y, r_y, σ_y, ϵ_y = tt_svd_ϵ(Y, 1e-12);
+    #C_x, r_x, σ_x, ϵ_x = tt_svd_ϵ(X, 1e-12);
+    #C_y, r_y, σ_y, ϵ_y = tt_svd_ϵ(Y, 1e-12);
+    C_x, σ_x, ϵ_x = tt_svd(X, R_x[2]);
+    C_y, σ_y, ϵ_y = tt_svd(Y, R_y[2]);
     C_s = tt_add(C_x, C_y, 1, 1);
     C_z = tt_mult(C_x, C_y);
 
-    Q_s, r_s = t_mpstt_ϵ(C_s, 1e-12);
-    Q_z, r_z = t_mpstt_ϵ(C_z, 1e-7);
+    ##Q_s, r_s = t_mpstt_ϵ(C_s, 1e-12);
+    ##Q_z, r_z = t_mpstt_ϵ(C_z, 1e-7);
+    Q_s = t_mpstt(C_s, R_s[2]);
+    Q_z = t_mpstt(C_z, R_z[2]);
 
     println("Exercise 3b")
     println("|ttmps_eval(C_s) - S||_F/||S||_F = $(norm(S - ttmps_eval(C_s, dims))/norm(S))")

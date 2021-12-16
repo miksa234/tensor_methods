@@ -96,9 +96,8 @@ end
 function tt_svd(A, r)
     n = size(A)
     d = length(n)
-    r_new = [1, r...]
+    r_new = [1, r..., 1]
     S_0_hat = copy(A)
-    S0s = []
     C = []; σ = []; ϵ = []
     for k=2:d
         B_k = reshape(S_0_hat, (r_new[k-1] * n[k-1], prod([n[i] for i=k:d])))
